@@ -74,4 +74,4 @@ npm run validate
 dist/lx-sync-server.jsplugin.zip
 ```
 
-每次推送代码后，GitHub Actions 也会自动构建并上传 zip 插件包 artifact。
+每次推送代码后，GitHub Actions 会自动构建 zip 插件包，并更新 GitHub Releases 中的 `latest` 版本。
