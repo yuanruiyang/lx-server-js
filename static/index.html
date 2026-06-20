@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LX Sync Server</title>
+  <link rel="stylesheet" href="static/css/styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="topbar liquid-chrome">
+      <div class="topbar-copy">
+        <span class="eyebrow">Songloft Plugin</span>
+        <h1>LX Sync Server</h1>
+        <p id="status-line">正在读取插件状态</p>
+      </div>
+      <div class="topbar-actions control-cluster">
+        <a id="player-link" class="button secondary icon" href="http://192.168.31.63:9527/music" target="_blank" rel="noreferrer"><span class="button-glyph" aria-hidden="true">↗</span>打开 LX 播放器</a>
+        <button id="refresh-button" class="button icon" type="button"><span class="button-glyph" aria-hidden="true">↻</span>刷新歌单</button>
+      </div>
+    </section>
+
+    <section class="status-grid" aria-label="插件状态摘要">
+      <div class="status-card">
+        <span>连接</span>
+        <strong id="summary-connection">读取中</strong>
+        <small id="summary-player">等待配置</small>
+      </div>
+      <div class="status-card">
+        <span>快照</span>
+        <strong id="summary-snapshot">尚未同步</strong>
+        <small id="summary-snapshot-time">等待 LX Server</small>
+      </div>
+      <div class="status-card">
+        <span>菜单</span>
+        <strong id="summary-menu">读取中</strong>
+        <small id="summary-menu-slots">等待 Songloft</small>
+      </div>
+      <div class="status-card">
+        <span>事件</span>
+        <strong id="summary-events">0 条</strong>
+        <small id="summary-events-latest">暂无播放事件</small>
+      </div>
+    </section>
+
+    <section class="layout">
+      <aside class="panel settings-panel">
+        <div class="panel-header">
+          <div>
+            <span class="eyebrow">Control</span>
+            <h2>连接配置</h2>
+          </div>
+        </div>
+        <div class="menu-toggle-block">
+          <label class="switch-row" for="menu-enabled">
+            <span>
+              <strong>显示在左侧菜单</strong>
+              <small>打开后可从 Songloft 左侧栏进入此插件</small>
+            </span>
+            <input id="menu-enabled" type="checkbox" role="switch">
+          </label>
+        </div>
+        <form id="config-form">
+          <label>
+            <span>LX Server</span>
+            <input id="base-url" name="baseUrl" type="url" required>
+          </label>
+          <label>
+            <span>用户名</span>
+            <input id="username" name="username" type="text" autocomplete="username" required>
+          </label>
+          <label>
+            <span>密码</span>
+            <input id="password" name="password" type="password" autocomplete="current-password" placeholder="留空表示保留已保存密码">
+          </label>
+          <label>
+            <span>Web 播放器</span>
+            <input id="player-url" name="playerUrl" type="url">
+          </label>
+          <label>
+            <span>导入前缀</span>
+            <input id="import-prefix" name="importPrefix" type="text">
+          </label>
+          <label>
+            <span>默认音质</span>
+            <select id="default-quality" name="defaultQuality">
+              <option value="128k">128k</option>
+              <option value="320k">320k</option>
+              <option value="flac">flac</option>
+              <option value="flac24bit">flac24bit</option>
+            </select>
+          </label>
+          <label>
+            <span>自动刷新分钟</span>
+            <input id="auto-refresh" name="autoRefreshMinutes" type="number" min="0" step="1">
+          </label>
+          <label class="checkbox-row">
+            <input id="record-events" name="recordPlayEvents" type="checkbox">
+            <span>记录播放事件和插件投放</span>
+          </label>
+          <div class="form-actions control-cluster">
+            <button class="button icon" type="submit"><span class="button-glyph" aria-hidden="true">✓</span>保存配置</button>
+            <button class="button secondary icon" id="test-button" type="button"><span class="button-glyph" aria-hidden="true">◎</span>测试连接</button>
+          </div>
+        </form>
+      </aside>
+
+      <section class="content-area">
+        <div class="panel miot-panel">
+          <div class="miot-header panel-header">
+            <div>
+              <span class="eyebrow">Playback</span>
+              <h2>小爱音箱投放</h2>
+              <p id="miot-status">正在读取 MiOT 插件状态</p>
+            </div>
+            <button id="miot-refresh-button" class="button secondary icon" type="button"><span class="button-glyph" aria-hidden="true">↻</span>刷新设备</button>
+          </div>
+          <div class="miot-grid">
+            <label>
+              <span>小米账号</span>
+              <select id="miot-account">
+                <option value="">暂无账号</option>
+              </select>
+            </label>
+            <label>
+              <span>音箱设备</span>
+              <select id="miot-device">
+                <option value="">暂无设备</option>
+              </select>
+            </label>
+            <label>
+              <span>LX 歌单</span>
+              <select id="miot-playlist">
+                <option value="">暂无 LX 歌单</option>
+              </select>
+            </label>
+            <label>
+              <span>播放模式</span>
+              <select id="miot-play-mode">
+                <option value="order">顺序播放</option>
+                <option value="loop">列表循环</option>
+                <option value="random">随机播放</option>
+                <option value="single">单曲循环</option>
+              </select>
+            </label>
+          </div>
+          <div class="miot-actions control-cluster">
+            <button id="miot-play-button" class="button strong icon" type="button"><span class="button-glyph" aria-hidden="true">▶</span>导入并投放</button>
+            <button id="miot-toggle-button" class="button secondary icon" type="button"><span class="button-glyph" aria-hidden="true">Ⅱ</span>暂停/继续</button>
+            <button id="miot-prev-button" class="button secondary icon" type="button"><span class="button-glyph" aria-hidden="true">‹</span>上一首</button>
+            <button id="miot-next-button" class="button secondary icon" type="button"><span class="button-glyph" aria-hidden="true">›</span>下一首</button>
+            <button id="miot-stop-button" class="button secondary icon" type="button"><span class="button-glyph" aria-hidden="true">■</span>停止</button>
+          </div>
+          <p id="miot-result" class="miot-result">等待选择 LX 歌单</p>
+        </div>
+
+        <div class="panel online-panel">
+          <div class="online-header panel-header">
+            <div>
+              <span class="eyebrow">Discovery</span>
+              <h2>平台歌单与排行榜</h2>
+              <p id="online-status">正在读取在线内容</p>
+            </div>
+            <div class="online-actions control-cluster">
+              <button id="online-refresh-button" class="button secondary icon" type="button"><span class="button-glyph" aria-hidden="true">↻</span>刷新当前</button>
+              <button id="online-import-button" class="button strong icon" type="button"><span class="button-glyph" aria-hidden="true">＋</span>导入到 Songloft</button>
+              <button id="online-miot-button" class="button secondary icon" type="button"><span class="button-glyph" aria-hidden="true">▶</span>导入并投放</button>
+            </div>
+          </div>
+          <div class="online-controls">
+            <div class="segmented" role="tablist" aria-label="在线内容类型">
+              <button id="online-songlist-tab" class="segmented-button active" type="button" data-online-mode="songlist" aria-pressed="true">平台歌单</button>
+              <button id="online-leaderboard-tab" class="segmented-button" type="button" data-online-mode="leaderboard" aria-pressed="false">排行榜</button>
+            </div>
+            <label>
+              <span>平台</span>
+              <select id="online-source">
+                <option value="kw">酷我音乐</option>
+                <option value="kg">酷狗音乐</option>
+                <option value="tx">QQ音乐</option>
+                <option value="wy">网易云音乐</option>
+                <option value="mg">咪咕音乐</option>
+              </select>
+            </label>
+            <label id="online-tag-field">
+              <span>分类</span>
+              <select id="online-tag">
+                <option value="">全部</option>
+              </select>
+            </label>
+            <label id="online-sort-field">
+              <span>排序</span>
+              <select id="online-sort">
+                <option value="">默认</option>
+              </select>
+            </label>
+            <form id="online-search-form" class="online-search-form">
+              <label>
+                <span>搜索歌单</span>
+                <input id="online-search" name="onlineSearch" type="search" placeholder="歌单关键词">
+              </label>
+              <button class="button secondary icon" type="submit"><span class="button-glyph" aria-hidden="true">⌕</span>搜索</button>
+              <button id="online-clear-search" class="button secondary icon" type="button"><span class="button-glyph" aria-hidden="true">×</span>清除</button>
+            </form>
+          </div>
+          <div class="online-browser">
+            <div class="online-list" id="online-items-body">
+              <div class="empty">暂无在线内容</div>
+            </div>
+            <div class="online-detail">
+              <div class="online-detail-hero">
+                <div id="online-detail-cover" class="cover-art cover-art-large cover-placeholder" aria-hidden="true"></div>
+                <div>
+                  <div class="detail-header">
+                    <h2 id="online-detail-title">在线歌曲预览</h2>
+                    <span id="online-detail-count"></span>
+                  </div>
+                  <p id="online-detail-meta" class="online-detail-meta">选择一个平台歌单或榜单</p>
+                </div>
+              </div>
+              <div id="online-song-list" class="song-list online-song-list">
+                <div class="empty">选择一个平台歌单或榜单</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="toolbar panel">
+          <div>
+            <span class="eyebrow">Library</span>
+            <h2>LX 歌单快照</h2>
+            <p id="snapshot-meta">尚未同步</p>
+          </div>
+          <div class="toolbar-actions control-cluster">
+            <button id="select-all-button" class="button secondary icon" type="button"><span class="button-glyph" aria-hidden="true">☑</span>全选</button>
+            <button id="clear-selection-button" class="button secondary icon" type="button"><span class="button-glyph" aria-hidden="true">□</span>清空</button>
+            <button id="import-button" class="button strong icon" type="button"><span class="button-glyph" aria-hidden="true">＋</span>导入选中歌单</button>
+          </div>
+        </div>
+
+        <div class="panel playlist-panel">
+          <div id="playlist-body" class="playlist-grid">
+            <div class="empty">暂无快照</div>
+          </div>
+        </div>
+
+        <div class="panel detail-panel">
+          <div class="detail-header panel-header">
+            <h2 id="detail-title">歌曲预览</h2>
+            <span id="detail-count"></span>
+          </div>
+          <div id="song-list" class="song-list">
+            <div class="empty">选择一个歌单查看歌曲</div>
+          </div>
+        </div>
+
+        <div class="panel events-panel">
+          <div class="detail-header panel-header">
+            <h2>最近播放事件</h2>
+            <button id="events-refresh-button" class="button secondary small icon" type="button"><span class="button-glyph" aria-hidden="true">↻</span>刷新</button>
+          </div>
+          <div id="events-list" class="events-list">
+            <div class="empty">暂无记录</div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </main>
+  <script src="static/js/app.js"></script>
+</body>
+</html>

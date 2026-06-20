@@ -1,0 +1,20 @@
+{
+  "name": "songloft-lx-sync-server",
+  "version": "0.1.0",
+  "description": "Songloft plugin for importing playlists and resolving playback URLs from LX Sync Server.",
+  "private": true,
+  "scripts": {
+    "clean": "node scripts/clean-build.mjs",
+    "prebuild": "npm run clean",
+    "build": "songloft-plugin build",
+    "regression": "node scripts/regression-checks.mjs",
+    "ui-check": "node scripts/ui-design-checks.mjs",
+    "validate": "node scripts/validate-built.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@songloft/plugin-builder": "^2.6.0",
+    "@songloft/plugin-sdk": "^2.6.0",
+    "typescript": "^5.7.0"
+  }
+}

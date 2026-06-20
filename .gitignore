@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.tmp/
+*.jsplugin.zip
+.songloft-plugin/
+.songloft-dev.json
+npm-debug.log*
