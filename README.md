@@ -4,10 +4,10 @@
 
 ## 需要准备
 
-- 已安装并可访问的 Songloft。
-- 已安装并可访问的 LX Sync Server。
+- 已安装并可访问的 [Songloft](https://github.com/songloft-org/songloft)：面向个人用户的自托管音乐服务器。
+- 已安装并可访问的 [LX Sync Server](https://github.com/XCQ0607/lxserver)：LX Music 数据同步服务端。
 - LX Sync Server 用户名和密码。
-- 可选：Songloft 官方 MiOT 智能音箱插件。只有需要投放到小爱音箱时才需要。
+- 可选：[Songloft MiOT 智能音箱插件](https://github.com/songloft-org/songloft-plugin-miot)。只有需要投放到小爱音箱时才需要。
 
 ## 安装
 
@@ -73,3 +73,5 @@ npm run validate
 ```text
 dist/lx-sync-server.jsplugin.zip
 ```
+
+每次推送代码后，GitHub Actions 也会自动构建并上传 zip 插件包 artifact。

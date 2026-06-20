@@ -1,0 +1,52 @@
+name: Build Plugin
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build zip plugin
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Run regression checks
+        run: npm run regression
+
+      - name: Run UI checks
+        run: npm run ui-check
+
+      - name: Build plugin
+        run: npm run build
+
+      - name: Validate built plugin
+        run: npm run validate
+
+      - name: Upload plugin zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: lx-sync-server-jsplugin-${{ github.sha }}
+          path: dist/lx-sync-server.jsplugin.zip
+          if-no-files-found: error
+          retention-days: 30
