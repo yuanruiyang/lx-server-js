@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "description": "Import LX Sync Server user playlists, online playlists, and leaderboards into Songloft.",
   "author": "songloft-local",
-  "homepage": "https://github.com/songloft-org/songloft",
+  "homepage": "https://github.com/yuanruiyang/lx-server-js",
   "license": "Apache-2.0",
   "entryPath": "lx-sync-server",
   "main": "main.js",
@@ -18,9 +18,9 @@
     "playlists.write",
     "inter-plugin"
   ],
-  "updateUrl": "",
-  "download_url": "",
-  "entryHash": "",
-  "zipHash": "",
+  "updateUrl": "https://raw.githubusercontent.com/yuanruiyang/lx-server-js/main/plugin.json",
+  "download_url": "https://github.com/yuanruiyang/lx-server-js/releases/download/v0.1.0/lx-sync-server.jsplugin.zip",
+  "entryHash": "e1b6a79a99d5b0aa8c47fbb4fcf4dd35d39ed628e54515b422949b926b866826",
+  "zipHash": "d62f4d091ad28f330d19d7b3a6b1e5e82fe988813df0ff9d3792e304fb36fd7b",
   "staticHash": true
 }
